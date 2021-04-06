@@ -10,7 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime 
 
-delta = 3 #no of pages to go though
+delta = 1 #no of pages to go though
 
 #############
 # DATA INPUT: Player table row 
@@ -58,11 +58,9 @@ def load_players_page(page_no): #page_no > 1
 
 trade_info = {}
 for i in range(delta):
-    soup = load_players_page(i+1)
+    soup = load_gold_players_page(i+1)
     players = soup.find("table",id="repTb").find("tbody").find_all("tr")
     for player in players:
-        if get_player_version(player)!="Rare":
-            continue
         link = get_link(player)
         name = get_name(player)
         print("Name:", name, ", href: ", link)
