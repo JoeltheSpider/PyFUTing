@@ -1,2 +1,4 @@
 # PyFUTing
-Fut trading model based on futbin
+- Generic fut module for algorthmised trading.
+- Based on futbin data.
+- Real football inferences also inferred in prediction.
