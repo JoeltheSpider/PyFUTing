@@ -5,6 +5,8 @@ Created on Tue Apr  6 13:20:53 2021
 @author: Joel 
 """
 from player_req import PlayerReq
+from obj_req import ObjReq
+from make_object import Player
 
 #TODO: add KeyboardInterrupt exception handling : should return data processed till that point. 
 # Find a fancy way to do (generic wrappers?)
@@ -15,7 +17,11 @@ class ExtractProc:
     def __init__(self, console="pc"):
         self.console = console
         self.fut = PlayerReq(console)
-        
+        self.futObj = ObjReq(console)
+    
+    ###########
+    # from players page, cannot be used elsewhere
+    # input is player row from futbin.com/players
     def get_current_price(self, player):
         return player.find_all("td")[4].get_text().strip()
     
@@ -27,6 +33,7 @@ class ExtractProc:
     
     def get_player_version(self, player):
         return player.find_all("td")[3].get_text().strip()
+    ###########
     
     def get_player_id(self, player_page):
         """
@@ -100,3 +107,26 @@ class ExtractProc:
             id_map[name+' '+version] = player_id
         
         return id_map
+    
+    def get_obj_players(self):
+        """
+            Returns each player page as list
+        """
+        players = []
+        for player in self.futObj.load_player_obj():
+            players.append(self.fut.load_player_page(player.find("a")["href"]))
+        return players
+    
+    def get_milestone_players(self):
+        """
+            Returns each milestone player page as list
+        """
+        # players = []
+        # for player_bunch in self.futObj.load_season_player_obj():
+        #     for player in player_bunch.find_all("a")[1:]:
+        #         players.append(self.fut.load_player_page(player["href"]))
+        # return players
+        # full player list not in futbin. 
+        # If data is extracted from PlayerReq, not able to extract squad foundation players.
+        # so disregard
+        pass

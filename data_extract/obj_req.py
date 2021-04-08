@@ -6,10 +6,11 @@ class ObjReq:
     """
     Objectives related request making part of the extract module.
     """
-    def __init__(self):
+    def __init__(self, console="pc"):
         self.OBJ_LINK = "https://www.futbin.com/objectives/"
-
-    def load_current_milestones(self):
+        self.console = console
+        
+    def load_milestones(self):
         """
             Loads all current milestones objectives.
         """
@@ -18,7 +19,11 @@ class ObjReq:
         soup = BeautifulSoup(page.content, 'html.parser')
         return [ms for ms in soup.find(class_="col-md-12 mainObjTab mainObjTabMilestones panel2").contents if ms!="\n"] #.find_all(class_="card mb-3 expandableGroupArea")
 
-    def load_current_obj(self):
+    def load_player_milestone(self):
+        # futbin does not list all players in milestones. So it is better to use PlayerReq
+        return 
+    
+    def load_obj(self):
         """
             Loads all current objectives.
         """
@@ -27,7 +32,7 @@ class ObjReq:
         soup = BeautifulSoup(page.content, 'html.parser')
         return soup.find(class_="objTab seasonTab").find_all(class_="groupAreaBlur")
     
-    def load_current_player_obj(self):
+    def load_player_obj(self):
         """
             Loads all current player objectives.
         """
