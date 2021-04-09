@@ -1,12 +1,7 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Apr  6 13:20:53 2021
-
-@author: Joel 
-"""
+# objective: extract from sites and make player objects
 from player_req import PlayerReq
 from obj_req import ObjReq
-from make_object import Player
+from make_object import Player, Maker
 
 #TODO: add KeyboardInterrupt exception handling : should return data processed till that point. 
 # Find a fancy way to do (generic wrappers?)
@@ -18,7 +13,8 @@ class ExtractProc:
         self.console = console
         self.fut = PlayerReq(console)
         self.futObj = ObjReq(console)
-    
+        self.maker = Maker()
+
     ###########
     # from players page, cannot be used elsewhere
     # input is player row from futbin.com/players
@@ -41,7 +37,7 @@ class ExtractProc:
         """
         return player_page.find(id="page-info")["data-player-resource"]
     
-    def iterate_players_trade(self, players):
+    def iterate_players_trade_from_search(self, players):
         trade_data = []
         for player in players:
             link = self.get_link(player)
@@ -56,6 +52,33 @@ class ExtractProc:
                                "version": self.get_player_version(player)})
         return trade_data
     
+    def iterate_players_trade_from_id(self, player_ids):
+        trade_data = []
+        for player_id in player_ids:
+            price_history = self.fut.get_price_history(player_id)
+            trade_data.append({"price": price_history, "id":player_id})
+        return trade_data
+
+    def make_player_objects(self):
+        """
+        main function
+        """
+        objs = []
+        try:
+            i = 0
+            while True:
+                # check progress
+                soup = self.fut.load_players_page(i+1,"all")
+                players = soup.find("table",id="repTb").find("tbody").find_all("tr")[:2]
+                objs.extend([self.maker.make_player(self.fut.load_player_page(self.get_link(player))) for player in players])
+                i += 1
+                if i == 2:
+                    break
+        except:
+            #TODO save progress- easy, how to save, what format?
+            pass
+        return objs
+            
     def get_trade_data(self, page_no=1, version="gold"):
         """
             Returns trade history of each player as dict.
@@ -68,10 +91,13 @@ class ExtractProc:
                 ExtractProc().get_trade_data(5, "fut-bd")
         """
         trade_data = []
-        for i in range(page_no):
-            soup = self.fut.load_players_page(i+1,"gold")
-            players = soup.find("table",id="repTb").find("tbody").find_all("tr")
-            trade_data.extend(self.iterate_players_trade(players))
+        try:
+            for i in range(page_no):
+                soup = self.fut.load_players_page(i+1,"gold")
+                players = soup.find("table",id="repTb").find("tbody").find_all("tr")
+                trade_data.extend(self.iterate_players_trade_from_search(players))
+        except:
+            pass
         return trade_data
     
     def get_trade_data_by_name(self, player_name):
