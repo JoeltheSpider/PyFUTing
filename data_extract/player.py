@@ -1,8 +1,5 @@
 from datetime import datetime
 
-#TODO: make code better with enums and things
-#TODO: make display for all objects
-
 """
     Player data model
 """
@@ -107,7 +104,7 @@ class Player(object):
     added_on = datetime(10,10,10)
     real_face = bool()
     body_type = str()
-    age = int()
+    age = str()
     
     rating = Rating()
     

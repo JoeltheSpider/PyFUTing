@@ -6,9 +6,9 @@ class PlayerReq:
     """
     Player related request making part of the extract module
     """
-    def __init__(self, console="pc"):
-        self.DAILY_GRAPH_LINK = "https://www.futbin.com/21/playerGraph?type=daily_graph&year=21&player={0}"
-        self.PLAYERS_LINK = 'https://www.futbin.com/21/players/'
+    def __init__(self, console="pc", year="21"):
+        self.DAILY_GRAPH_LINK = "https://www.futbin.com/"+year+"/playerGraph?type=daily_graph&year=21&player={0}"
+        self.PLAYERS_LINK = "https://www.futbin.com/"+year+"/players/"
         self.console = console
         
     def get_price_history(self, player_id, type="daily"):

@@ -7,4 +7,4 @@ class PreProcessTrade():
         # no use of extract process from
 
     def preprocess_player_trade(self, players):
-        pass 
+        pass

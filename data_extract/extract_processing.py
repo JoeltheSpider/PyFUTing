@@ -5,7 +5,7 @@ from make_object import Player, Maker
 
 #TODO: add KeyboardInterrupt exception handling : should return data processed till that point. 
 # Find a fancy way to do (generic wrappers?)
-class ExtractProc:
+class ExtractData:
     """
     Processsing part of extract module
     """
@@ -14,6 +14,7 @@ class ExtractProc:
         self.fut = PlayerReq(console)
         self.futObj = ObjReq(console)
         self.maker = Maker()
+        self.current_run = []
 
     ###########
     # from players page, cannot be used elsewhere
@@ -63,21 +64,21 @@ class ExtractProc:
         """
         main function
         """
-        objs = []
+        self.current_run = []
         try:
             i = 0
             while True:
                 # check progress
                 soup = self.fut.load_players_page(i+1,"all")
                 players = soup.find("table",id="repTb").find("tbody").find_all("tr")[:2]
-                objs.extend([self.maker.make_player(self.fut.load_player_page(self.get_link(player))) for player in players])
+                # print([self.fut.load_player_page(self.get_link(player)) for player in players])
+                for player in players:
+                    print(self.get_name(player))
+                    self.current_run.append(self.maker.make_player(self.fut.load_player_page(self.get_link(player))))
                 i += 1
-                if i == 2:
-                    break
-        except:
-            #TODO save progress- easy, how to save, what format?
-            pass
-        return objs
+        except KeyboardInterrupt as e:
+            return self.current_run
+        return self.current_run
             
     def get_trade_data(self, page_no=1, version="gold"):
         """
